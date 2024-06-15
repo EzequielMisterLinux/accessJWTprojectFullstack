@@ -56,6 +56,19 @@ const UpdateUserById = async(req, res) => {
     }
 }
 
+const UpdatePassw = async(req, res) => {
+
+    const {passw} = req.body
+    const id = req.params.id
+
+    try {
+        const updateUser = await UserModel.findByIdAndUpdate(id , {passw}, {new:true})
+        res.status(200).json(updateUser)
+        console.log("user passw update is success");
+    } catch (error) {
+        console.error("has problem ocurred in ther server", error);
+    }
+}
 
   
 const AccessLogin = async(req, res) => {
@@ -68,6 +81,7 @@ const AccessLogin = async(req, res) => {
         }
         const token = jwt.sign({ id: user._id, username: user.username }, process.env.SECRET_KEY, { expiresIn: '1h' });
          res.json({ token });
+         console.log("login user is successfully");
       } catch (error) {
         res.status(500).send('Error en el servidor');
         console.error("problem in the server", error);
@@ -80,4 +94,5 @@ export {
     GetUserById, 
     GetUsers, 
     UpdateUserById, 
-    AccessLogin}
+    AccessLogin,
+    UpdatePassw}

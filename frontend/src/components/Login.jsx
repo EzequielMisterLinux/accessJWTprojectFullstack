@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { login } from '../api/UsersProvider.jsx';
 
 const Login = () => {
   const [nombreUsuario, setNombreUsuario] = useState('');
@@ -8,9 +9,14 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    // Aquí iría la lógica para el login y obtención del token JWT
-    // Suponemos que la validación fue exitosa
-    navigate('/dashboard');
+    try {
+      const response = await login(nombreUsuario, password);
+      if (response) {
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      alert('Credentials are incorrect');
+    }
   };
 
   return (

@@ -3,7 +3,8 @@ import {
     CreateNewUser , 
     GetUserById, 
     GetUsers,
-    UpdateUserById
+    UpdateUserById,
+    UpdatePassw
 } from "../controllers/UserController.js";
 
 import express from 'express'
@@ -19,7 +20,7 @@ rutas.get('/users/:id', GetUserById)
 rutas.get('/users', GetUsers)
 rutas.put('/users/:id', UpdateUserById)
 rutas.post('/login', AccessLogin)
-
+rutas.put('/loginpassw/:id', UpdatePassw)
 
 
 

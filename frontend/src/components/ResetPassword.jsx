@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { update } from '../api/UsersProvider';
 
 const ResetPassword = () => {
   const { token } = useParams();
