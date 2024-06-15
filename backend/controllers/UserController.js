@@ -75,4 +75,9 @@ const AccessLogin = async(req, res) => {
 }
 
 
-export {CreateNewUser, GetUserById, GetUsers, UpdateUserById, AccessLogin}
+export {
+    CreateNewUser, 
+    GetUserById, 
+    GetUsers, 
+    UpdateUserById, 
+    AccessLogin}
