@@ -1,13 +1,10 @@
 import mongoose from "mongoose";
 
-
-const UserShema = mongoose.Schema({
-
+const UserSchema = mongoose.Schema({
     name: {
         type: String,
         required: true
     },
-
     middlename: {
         type: String,
         required: true
@@ -25,11 +22,15 @@ const UserShema = mongoose.Schema({
     passw: {
         type: String,
         required: true,
-        unique: true
+    },
+    resetPasswordToken: {
+        type: String,
+    },
+    resetPasswordExpires: {
+        type: Date,
     }
-})
+});
 
+const UserModel = mongoose.model('User', UserSchema);
 
-const UserModel = mongoose.model('User', UserShema)
-
-export default UserModel
+export default UserModel;

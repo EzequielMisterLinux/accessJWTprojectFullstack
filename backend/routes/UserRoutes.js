@@ -1,33 +1,29 @@
 import { 
-    AccessLogin,
-    CreateNewUser , 
-    GetUserById, 
-    GetUsers,
-    UpdateUserById,
-    UpdatePassw
+  AccessLogin,
+  CreateNewUser,
+  GetUserById,
+  GetUsers,
+  UpdateUserById,
+  UpdatePassw,
+  SendResetPasswordEmail,
+  VerifyResetTokenAndUpdatePassword
 } from "../controllers/UserController.js";
-
-import express from 'express'
+import express from 'express';
 import verifyToken from "../middleware/middleware.js";
 
-const rutas = express.Router()
+const rutas = express.Router();
 
-/*end points */
-
-
-rutas.post('/users', CreateNewUser)
-rutas.get('/users/:id', GetUserById)
-rutas.get('/users', GetUsers)
-rutas.put('/users/:id', UpdateUserById)
-rutas.post('/login', AccessLogin)
-rutas.put('/loginpassw/:id', UpdatePassw)
-
-
-
-
+/* End points */
+rutas.post('/userregister', CreateNewUser);
+rutas.get('/users/:id', verifyToken, GetUserById);
+rutas.get('/users', verifyToken, GetUsers);
+rutas.put('/users/:id', verifyToken, UpdateUserById);
+rutas.post('/login', AccessLogin);
+rutas.put('/loginpassw', verifyToken, UpdatePassw);
+rutas.put('/verifyresetpassw', VerifyResetTokenAndUpdatePassword);
+rutas.post('/send-reset-password-email', SendResetPasswordEmail);
 rutas.get('/protected', verifyToken, (req, res) => {
-    res.send(`Hola ${req.user.username}, esta es una ruta protegida.`);
-  });
+  res.send(`Hola ${req.user.username}, esta es una ruta protegida.`);
+});
 
-export default rutas
-
+export default rutas;

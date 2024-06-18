@@ -1,21 +1,25 @@
-import express from 'express'
-import connectDB from './database/mongodb.js'
-import rutas from './routes/UserRoutes.js'
+import express from 'express';
+import connectDB from './database/mongodb.js';
+import rutas from './routes/UserRoutes.js';
 import dotenv from 'dotenv';
-import cors from 'cors'
-dotenv.config()
+import cors from 'cors';
 
-const server = express()
+dotenv.config();
 
-server.use(cors())
+const server = express();
 
-const PORT = 3000
+server.use(cors());
 
-connectDB()
-server.use(express.json())
+const PORT = process.env.PORT || 3000;
 
-server.use('/api', rutas)
-
+connectDB();
+server.use(express.json());
 
 
-server.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))
+
+server.use('/api', rutas);
+
+
+
+
+server.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`));

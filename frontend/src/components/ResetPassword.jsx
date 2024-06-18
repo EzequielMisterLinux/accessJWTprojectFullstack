@@ -1,23 +1,32 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { update } from '../api/UsersProvider';
+import { passwUpdate } from '../api/UsersProvider';
 
 const ResetPassword = () => {
   const { token } = useParams();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
-
+  
   const handleResetPassword = async (e) => {
     e.preventDefault();
+    
     if (password !== confirmPassword) {
       alert('Las contraseñas no coinciden');
       return;
     }
-    // Aquí v a a ir a logica del reseteo de contrasseña
-    navigate('/login');
+    
+    try {
+      const response = await passwUpdate(password, token); // Ensure passwUpdate accepts both parameters
+      alert(response.data.message);
+      navigate('/login');
+    } catch (error) {
+      console.error("Error resetting password", error);
+      alert("Error resetting password");
+    }
   };
-
+  
+  
   return (
     <div className="flex h-screen items-center justify-center bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
