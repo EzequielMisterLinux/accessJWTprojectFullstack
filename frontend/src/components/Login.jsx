@@ -25,7 +25,7 @@ const Login = () => {
         <h2 className="text-2xl font-bold text-center">Iniciar Sesión</h2>
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label htmlFor="nombreUsuario" className="block text-sm font-medium text-gray-700">Nombre de Usuario</label>
+            <label htmlFor="nombreUsuario" className="block text-sm font-medium text-gray-700">Usuario</label>
             <input
               type="text"
               id="nombreUsuario"
@@ -50,7 +50,7 @@ const Login = () => {
 
           </div>
           <div>
-          <a href="/register" className="text-sm text-indigo-600 hover:underline">¿aun no tiene cuenta? click aqui</a>
+          <a href="/register" className="text-sm text-indigo-600 hover:underline">¿Aun no tiene cuenta? Regístrate aquí</a>
           </div>
         </form>
       </div>
