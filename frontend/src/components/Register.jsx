@@ -79,7 +79,7 @@ const Registeruser = () => {
           </div>
           <button type="submit" className="w-full py-2 mt-4 text-white bg-indigo-600 rounded-md hover:bg-indigo-700">Registrar</button>
           <div>
-            <a href="/login" className="text-sm text-indigo-600 hover:underline">¿ya tiene una cuenta? click aqui</a>
+            <a href="/login" className="text-sm text-indigo-600 hover:underline">¿Ya tienes una cuenta? Inicia sesión acá</a>
           </div>
         </form>
       </div>
