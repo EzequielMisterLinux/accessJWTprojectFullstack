@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import {Register} from '../api/UsersProvider';
+import { Register } from '../api/UsersProvider';
 import { useNavigate } from 'react-router-dom';
 
- 
 const Registeruser = () => {
   const [name, setName] = useState('');
   const [middlename, setMiddlename] = useState('');
@@ -10,19 +9,19 @@ const Registeruser = () => {
   const [passw, setPassw] = useState('');
   const [mail, setMail] = useState('');
   const navigate = useNavigate();
- 
+
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-        const response = await Register(name, middlename, username, passw, mail);
-        if (response) {
-          navigate('/dashboard');
-        }
+      const response = await Register(name, middlename, mail, username, passw);
+      if (response) {
+        navigate('/dashboard'); // Redirigir al Dashboard después del registro
+      }
     } catch (error) {
       console.error('Error al registrar el usuario:', error);
     }
   };
- 
+
   return (
     <div className="flex h-screen items-center justify-center bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
@@ -79,10 +78,13 @@ const Registeruser = () => {
             />
           </div>
           <button type="submit" className="w-full py-2 mt-4 text-white bg-indigo-600 rounded-md hover:bg-indigo-700">Registrar</button>
+          <div>
+            <a href="/login" className="text-sm text-indigo-600 hover:underline">¿ya tiene una cuenta? click aqui</a>
+          </div>
         </form>
       </div>
     </div>
   );
 };
- 
+
 export default Registeruser;

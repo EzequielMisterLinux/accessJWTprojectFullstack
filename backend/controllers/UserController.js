@@ -1,7 +1,11 @@
 import UserModel from "../models/userModel.js";
-import jwt from "jsonwebtoken";
-import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
+import bcrypt from 'bcrypt';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 
 const GetUserById = async (req, res) => {
     const id = req.params.id;
@@ -14,6 +18,9 @@ const GetUserById = async (req, res) => {
         console.error("has problem in the server", error);
     }
 };
+
+
+
 
 const GetUsers = async (req, res) => {
     try {
@@ -29,15 +36,22 @@ const GetUsers = async (req, res) => {
 const CreateNewUser = async (req, res) => {
     const { name, middlename, mail, username, passw } = req.body;
     try {
-        const NewUserAdd = new UserModel({ name, middlename, mail, username, passw });
+        const hashpasw = await bcrypt.hash(passw, 10); 
+        const NewUserAdd = new UserModel({ name, middlename, mail, username, passw: hashpasw });
         await NewUserAdd.save();
-        res.status(201).json(NewUserAdd);
+        
+        
+        const token = jwt.sign({ id: NewUserAdd._id, username: NewUserAdd.username }, process.env.SECRET_KEY, { expiresIn: '7d' });
+        
+        res.status(201).json({ token });
         console.log("add user is successfully");
     } catch (error) {
         res.status(500).json({ message: "Server error" });
         console.error("has problem occurred in the server", error);
     }
 };
+
+
 
 const UpdateUserById = async (req, res) => {
     const { name, middlename, mail, username, passw } = req.body;
@@ -67,16 +81,18 @@ const UpdatePassw = async (req, res) => {
     }
 };
 
+
+
+
 const transporter = nodemailer.createTransport({
     host: 'smtp.office365.com',
     port: 587,
     secure: false,
     auth: {
-        user: "thebusinnesultimate@outlook.com",
-        pass: "A12345678bABDKJ#"
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
     }
 });
-
 
 const SendResetPasswordEmail = async (req, res) => {
     const { mail } = req.body;
@@ -86,14 +102,14 @@ const SendResetPasswordEmail = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        const token = crypto.randomBytes(32).toString('hex');
+        const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, { expiresIn: '1h' });
         user.resetPasswordToken = token;
-        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+        user.resetPasswordExpires = Date.now() + 3600000; // 1 hora
         await user.save();
 
-        const resetLink = `http://localhost:5173/reset-password/${token}`; 
+        const resetLink = `http://localhost:5173/reset-password/${token}`;
         const mailOptions = {
-            from: "thebusinnesultimate@outlook.com",
+            from: process.env.EMAIL_USER,
             to: user.mail,
             subject: "Password Reset",
             text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
@@ -118,39 +134,52 @@ const SendResetPasswordEmail = async (req, res) => {
 };
 
 const VerifyResetTokenAndUpdatePassword = async (req, res) => {
-    const { token, email, password } = req.body;
+    const { token, passw } = req.body;
+
     try {
-    const user = await UserModel.findOne({
-    email,
-    resetPasswordToken: token,
-    resetPasswordExpires: { $gt: Date.now() }
-    });
-    if (!user) {
-    return res.status(400).send('Token inválido o expirado');
-    }
-    user.password = await bcrypt.hash(password, 10);
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
-    await user.save();
-    res.status(200).send('Contraseña actualizada correctamente');
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        const user = await UserModel.findById(decoded.id);
+        if (!user || user.resetPasswordToken !== token || user.resetPasswordExpires < Date.now()) {
+            return res.status(400).json({ message: "Invalid or expired token" });
+        }
+
+        const hashpasw = await bcrypt.hash(passw, 10);
+        user.passw = hashpasw;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save();
+        
+        res.status(200).json({ message: "Password updated successfully" });
     } catch (error) {
-    res.status(500).send('Error en el servidor');
+        res.status(500).json({ message: "Server error" });
+        console.error("Server error", error);
     }
-   };
+};
+
+
+
+
 
 const AccessLogin = async (req, res) => {
     const { username, passw } = req.body;
     try {
-        const user = await UserModel.findOne({ username, passw });
+        const user = await UserModel.findOne({ username });
         if (!user) {
             return res.status(401).send('Invalid credentials');
         }
+
+
+        const isMatch = await bcrypt.compare(passw, user.passw);
+        if (!isMatch) {
+            return res.status(401).send('Invalid credentials');
+        }
+
         const token = jwt.sign({ id: user._id, username: user.username }, process.env.SECRET_KEY, { expiresIn: '7d' });
         res.json({ token });
-        console.log("login user is successfully");
+        console.log("User logged in successfully");
     } catch (error) {
         res.status(500).send('Server error');
-        console.error("problem in the server", error);
+        console.error("Error in the server", error);
     }
 };
 

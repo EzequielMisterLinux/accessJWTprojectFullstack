@@ -47,6 +47,10 @@ const Login = () => {
           <button type="submit" className="w-full py-2 mt-4 text-white bg-indigo-600 rounded-md hover:bg-indigo-700">Iniciar Sesión</button>
           <div className="text-center">
             <a href="/forgot-password" className="text-sm text-indigo-600 hover:underline">¿Olvidó su contraseña?</a>
+
+          </div>
+          <div>
+          <a href="/register" className="text-sm text-indigo-600 hover:underline">¿aun no tiene cuenta? click aqui</a>
           </div>
         </form>
       </div>

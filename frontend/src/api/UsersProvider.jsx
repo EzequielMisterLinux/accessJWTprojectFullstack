@@ -1,20 +1,46 @@
 import axios from "axios";
 
+const api = axios.create({
+    baseURL: 'http://localhost:3000/api'
+});
+
+const sendResetPasswordEmail = async (email) => {
+    try {
+        const response = await api.post('/send-reset-password-email', { mail: email });
+        return response.data;
+    } catch (error) {
+        console.error("Error sending reset password email", error);
+        throw error;
+    }
+};
+
+const verifyResetTokenAndUpdatePassword = async (token, password) => {
+    try {
+        const response = await api.post('/verify-reset-password-token', { token, passw: password });
+        return response.data;
+    } catch (error) {
+        console.error("Error resetting password", error);
+        throw error;
+    }
+};
+
 const Register = async (name, middlename, mail, username, passw) => {
   try {
-    const response = await axios.post('http://localhost:3000/api/userregister',{
+    const response = await axios.post('http://localhost:3000/api/userregister', {
       name: name,
       middlename: middlename,
       username: username,
       passw: passw,
       mail: mail
-    })
-    response.data.save
+    });
+    const token = response.data.token;
+    localStorage.setItem('jwtToken', token);
+    return response.data;  
   } catch (error) {
     console.error("has problem ocurred in the endpoint api register");
-    throw error
+    throw error;
   }
-}
+};
 
 const login = async (username, passw) => {
   try {
@@ -48,20 +74,6 @@ const update = async (id, passw) => {
   }
 };
 
-
-const passwUpdate = async (newPassword, token) => {
-  try {
-    const response = await axios.put(`http://localhost:3000/api/verifyresetpassw/${token}`, { newPassword });
-    return response.data;
-  } catch (error) {
-    console.error("Error in passwUpdate", error);
-    throw error;
-  }
-};
-
-
-
-
 const getUser = async (name, middlename, mail, username, passw) => {
   try {
     const token = localStorage.getItem('jwtToken');
@@ -85,4 +97,4 @@ const getUser = async (name, middlename, mail, username, passw) => {
   }
 };
 
-export { login, Register, update, getUser, passwUpdate };
+export { login, Register, update, getUser, sendResetPasswordEmail, verifyResetTokenAndUpdatePassword };

@@ -32,6 +32,9 @@ const ForgotPassword = () => {
                         />
                     </div>
                     <button type="submit" className="w-full py-2 mt-4 text-white bg-indigo-600 rounded-md hover:bg-indigo-700">Enviar Enlace de Recuperación</button>
+                    <div>
+                        <a href="/register" className="text-sm text-indigo-600 hover:underline">¿crear nueva cuenta? click aqui</a>
+                    </div>
                 </form>
             </div>
         </div>
